@@ -14,7 +14,7 @@ from typing import Any
 import pytest
 from click.testing import CliRunner
 
-from tai_backend_rq import worker as worker_module
+from tai42_backend_rq import worker as worker_module
 
 # --- worker classes ----------------------------------------------------------
 

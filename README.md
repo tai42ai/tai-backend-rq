@@ -1,4 +1,4 @@
-# tai-backend-rq
+# tai42-backend-rq
 
 [![CI](https://github.com/tai42ai/tai-backend-rq/actions/workflows/ci.yml/badge.svg)](https://github.com/tai42ai/tai-backend-rq/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -6,7 +6,7 @@
 RQ execution backend for the TAI ecosystem: background tool runs and recurring
 schedules over Redis.
 
-It implements the `tai_contract.backend.Backend` contract — one strategy object
+It implements the `tai42_contract.backend.Backend` contract — one strategy object
 that launches the worker runtime (`worker` / `beat` / `dashboard`) and executes
 the work its workers pull from the broker. Fleet propagation of config changes
 is not a backend concern: it is the app's own worker bus, internal to the
@@ -38,7 +38,7 @@ add it as an editable dependency of the environment that runs the server:
 ```bash
 git clone https://github.com/tai42ai/tai-backend-rq
 cd tai-skeleton   # or your own app checkout
-uv add --editable ../tai-backend-rq   # once published: uv add tai-backend-rq
+uv add --editable ../tai-backend-rq   # once published: uv add tai42-backend-rq
 ```
 
 ## Discovery
@@ -46,20 +46,20 @@ uv add --editable ../tai-backend-rq   # once published: uv add tai-backend-rq
 The host manifest names this package as its backend module:
 
 ```yaml
-backend_module: tai_backend_rq
+backend_module: tai42_backend_rq
 ```
 
 Importing the package registers, as an import side-effect on the global
-`tai_app` handle:
+`tai42_app` handle:
 
-- **`RqBackend`** via `@tai_app.backends.register_backend` — the `launch`
+- **`RqBackend`** via `@tai42_app.backends.register_backend` — the `launch`
   entrypoint (`worker` / `beat` / `dashboard`).
-- **The `backend_*` tool surface** via `@tai_app.tools.tool` (see below).
+- **The `backend_*` tool surface** via `@tai42_app.tools.tool` (see below).
   `backend_list_schedules`, `backend_delete_schedule`,
   `backend_export_schedules`, and `backend_import_schedules` are the marker
   tools the host probes for scheduling availability and uses for the backup
   round-trip.
-- **Three BACKEND tool extensions** via `@tai_app.extensions.extension`:
+- **Three BACKEND tool extensions** via `@tai42_app.extensions.extension`:
   `sync_task` (queue and wait for the result), `async_task` (queue and return
   the job id), and `schedule_task` (register a recurring interval/crontab
   schedule). Each mints a `<tool>_<extension>` branch tool whose queued job
@@ -125,7 +125,7 @@ Not supported on RQ (raise `NotImplementedError`): `backend_registered_tasks`,
 
 ## Configuration
 
-Env group `RQ_` (a `tai_kit` settings class, cached and reset on live reload):
+Env group `RQ_` (a `tai42_kit` settings class, cached and reset on live reload):
 
 | Env var | Default | Meaning |
 | --- | --- | --- |
@@ -149,7 +149,7 @@ uv run pyright
 uv run pytest --cov --cov-report=term-missing
 ```
 
-The sibling `tai-contract` and `tai-kit` checkouts are resolved editable from
+The sibling `tai42-contract` and `tai42-kit` checkouts are resolved editable from
 `../tai-contract` and `../tai-kit` (see `[tool.uv.sources]`).
 
 ## License

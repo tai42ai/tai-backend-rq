@@ -1,7 +1,7 @@
 """RQ backend settings.
 
 A ``TaiBaseSettings`` subclass reading the ``RQ_`` env group, exposed through
-the ``rq_settings`` accessor cached by ``tai_kit.settings.settings_cache`` (so
+the ``rq_settings`` accessor cached by ``tai42_kit.settings.settings_cache`` (so
 a live-reload soft restart drops the singleton with every other settings
 group).
 
@@ -14,7 +14,7 @@ key, timeout, and kwarg name without any configuration.
 from __future__ import annotations
 
 from pydantic_settings import SettingsConfigDict
-from tai_kit.settings import TaiBaseSettings, settings_cache
+from tai42_kit.settings import TaiBaseSettings, settings_cache
 
 
 class RqSettings(TaiBaseSettings):

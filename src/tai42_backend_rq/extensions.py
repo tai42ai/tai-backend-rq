@@ -21,17 +21,17 @@ from makefun import create_function
 from rq.exceptions import NoSuchJobError
 from rq.job import JobStatus
 from rq_scheduler import Scheduler
-from tai_contract.app import tai_app
-from tai_contract.extensions import ExtensionKind
-from tai_kit.clients import client_ctx
-from tai_kit.clients.impl.redis import SyncRedisClient
-from tai_kit.utils.runtime.schedule_util import normalize_schedule
+from tai42_contract.app import tai42_app
+from tai42_contract.extensions import ExtensionKind
+from tai42_kit.clients import client_ctx
+from tai42_kit.clients.impl.redis import SyncRedisClient
+from tai42_kit.utils.runtime.schedule_util import normalize_schedule
 
-from tai_backend_rq.callback import prepare_backend_kwargs
-from tai_backend_rq.schedules import apply_normalized_schedule
-from tai_backend_rq.settings import rq_settings
-from tai_backend_rq.signatures import add_signature_params
-from tai_backend_rq.tasks import RQ_SCHEDULE_OPTS, RQ_TASK_OPTS, enqueue_task, tool_execution
+from tai42_backend_rq.callback import prepare_backend_kwargs
+from tai42_backend_rq.schedules import apply_normalized_schedule
+from tai42_backend_rq.settings import rq_settings
+from tai42_backend_rq.signatures import add_signature_params
+from tai42_backend_rq.tasks import RQ_SCHEDULE_OPTS, RQ_TASK_OPTS, enqueue_task, tool_execution
 
 
 class _PollableJob(Protocol):
@@ -76,7 +76,7 @@ def _wait_for_job_result(job: _PollableJob, timeout: float) -> Any:
         time.sleep(0.5)  # Poll interval.
 
 
-@tai_app.extensions.extension(kind=ExtensionKind.BACKEND, name="sync_task")
+@tai42_app.extensions.extension(kind=ExtensionKind.BACKEND, name="sync_task")
 def sync_task(func: Any, name: str, description: str) -> Any:
     """Branch ``func`` into ``<name>_sync_task``: queue the call and block
     until the job finishes, returning the job's result."""
@@ -99,7 +99,7 @@ def sync_task(func: Any, name: str, description: str) -> Any:
     )
 
 
-@tai_app.extensions.extension(kind=ExtensionKind.BACKEND, name="schedule_task")
+@tai42_app.extensions.extension(kind=ExtensionKind.BACKEND, name="schedule_task")
 def schedule_task(func: Any, name: str, description: str) -> Any:
     """Branch ``func`` into ``<name>_schedule_task``: register a recurring
     schedule (interval or crontab) that runs the tool via the queue."""
@@ -134,7 +134,7 @@ def schedule_task(func: Any, name: str, description: str) -> Any:
     )
 
 
-@tai_app.extensions.extension(kind=ExtensionKind.BACKEND, name="async_task")
+@tai42_app.extensions.extension(kind=ExtensionKind.BACKEND, name="async_task")
 def async_task(func: Any, name: str, description: str) -> Any:
     """Branch ``func`` into ``<name>_async_task``: queue the call and return
     the job id immediately (poll with ``backend_task_result``)."""

@@ -7,8 +7,8 @@ from typing import Any
 
 import pytest
 
-from tai_backend_rq import worker as worker_module
-from tai_backend_rq.backend import RqBackend
+from tai42_backend_rq import worker as worker_module
+from tai42_backend_rq.backend import RqBackend
 
 # The registration decorator's static type is a union (decorator-or-class);
 # at runtime the stub app returns the class unchanged.

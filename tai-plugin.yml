@@ -1,7 +1,7 @@
 spec_version: 1
 namespace: tai42
 name: backend-rq
-package: tai-backend-rq
+package: tai42-backend-rq
 version: 0.1.0
 description: "RQ execution backend for the TAI ecosystem — background tool runs and schedules over Redis."
 license: Apache-2.0
@@ -17,6 +17,6 @@ permissions:
 provides:
   - kind: backend
     name: rq
-    module: tai_backend_rq.backend
+    module: tai42_backend_rq.backend
     description: "RQ execution backend — background tool runs and schedules over Redis."
     tags: [backend, rq]

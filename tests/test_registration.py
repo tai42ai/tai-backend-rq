@@ -4,12 +4,12 @@ extensions, and the backend class itself."""
 from __future__ import annotations
 
 import pytest
-from tai_contract.extensions import ExtensionKind
+from tai42_contract.extensions import ExtensionKind
 
-import tai_backend_rq
-from tai_backend_rq import extensions as extensions_module
-from tai_backend_rq import tools as tools_module
-from tai_backend_rq.backend import RqBackend
+import tai42_backend_rq
+from tai42_backend_rq import extensions as extensions_module
+from tai42_backend_rq import tools as tools_module
+from tai42_backend_rq.backend import RqBackend
 
 # Canonical task/worker tools every backend exposes.
 TASK_WORKER_TOOLS = [
@@ -91,7 +91,7 @@ async def test_unsupported_tool_raises_not_implemented(name):
 
 def test_backend_class_is_registered(app):
     assert RqBackend in app.backends.registered
-    assert tai_backend_rq.RqBackend is RqBackend
+    assert tai42_backend_rq.RqBackend is RqBackend
 
 
 def test_backend_extensions_are_registered(app):

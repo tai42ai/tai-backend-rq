@@ -1,6 +1,6 @@
 """The uniform ``backend_*`` tool surface over the RQ broker.
 
-Registered through the global ``tai_app`` handle at import time. Task/worker
+Registered through the global ``tai42_app`` handle at import time. Task/worker
 tools read RQ's raw Redis structures (worker hashes, queue lists, the result
 stream); schedule tools drive the RQ scheduler. ``backend_list_schedules`` /
 ``backend_delete_schedule`` / ``backend_export_schedules`` /
@@ -29,15 +29,15 @@ from typing import Any, cast
 from rq.exceptions import NoSuchJobError
 from rq.job import JobStatus
 from rq_scheduler import Scheduler
-from tai_contract.app import tai_app
-from tai_kit.clients import client_ctx
-from tai_kit.clients.impl.redis import RedisClient, SyncRedisClient
-from tai_kit.utils.runtime.schedule_util import normalize_schedule
+from tai42_contract.app import tai42_app
+from tai42_kit.clients import client_ctx
+from tai42_kit.clients.impl.redis import RedisClient, SyncRedisClient
+from tai42_kit.utils.runtime.schedule_util import normalize_schedule
 
-from tai_backend_rq.liveness import heartbeat_fresh
-from tai_backend_rq.schedules import ScheduleRecord, apply_normalized_schedule, crontab_string, interval_seconds
-from tai_backend_rq.settings import RqSettings, rq_settings
-from tai_backend_rq.tasks import tool_execution
+from tai42_backend_rq.liveness import heartbeat_fresh
+from tai42_backend_rq.schedules import ScheduleRecord, apply_normalized_schedule, crontab_string, interval_seconds
+from tai42_backend_rq.settings import RqSettings, rq_settings
+from tai42_backend_rq.tasks import tool_execution
 
 
 def _async_redis(settings: RqSettings) -> AbstractAsyncContextManager[Any]:
@@ -64,7 +64,7 @@ def _heartbeat_fresh(raw: bytes | str) -> bool:
     """Whether a worker's stored ``last_heartbeat`` value proves it is alive.
 
     The stored value is parsed here; the freshness window itself is the shared
-    contract in :mod:`tai_backend_rq.liveness`, so these tools and the fleet
+    contract in :mod:`tai42_backend_rq.liveness`, so these tools and the fleet
     census agree on which workers are live.
     """
     return heartbeat_fresh(datetime.fromisoformat(_text(raw).replace("Z", "+00:00")))
@@ -100,7 +100,7 @@ async def _queue_names(r: Any, settings: RqSettings) -> list[str]:
     return [_text(m).removeprefix(prefix) for m in members]
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_ping_worker(worker_name: str | None = None) -> dict[str, Any]:
     """Ping all workers or a specific worker to check if they're alive (based on recent heartbeat)."""
     settings = rq_settings()
@@ -114,14 +114,14 @@ async def backend_ping_worker(worker_name: str | None = None) -> dict[str, Any]:
         return ping
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_list_active_workers() -> list[str]:
     """Get a list of all currently connected and responsive worker names."""
     ping = await backend_ping_worker(None)
     return list(ping.keys())
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_task_status(task_id: str) -> str:
     """Return the current status of a given task ID."""
     settings = rq_settings()
@@ -147,7 +147,7 @@ async def _read_failure_reason(r: Any, settings: RqSettings, task_id: str) -> st
     return "no failure details retained"
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_task_result(task_id: str, timeout: float | None = None) -> Any:
     """Return the result of a completed task by ID.
 
@@ -195,7 +195,7 @@ async def backend_task_result(task_id: str, timeout: float | None = None) -> Any
         return None
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_cancel_task(task_id: str) -> str:
     """Cancel a running or queued task."""
     settings = rq_settings()
@@ -217,7 +217,7 @@ async def backend_cancel_task(task_id: str) -> str:
         return await asyncio.to_thread(_cancel)
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_active_tasks(worker_name: str | None = None) -> dict[str, Any]:
     """Get all currently executing tasks on the worker(s).
 
@@ -242,7 +242,7 @@ async def backend_active_tasks(worker_name: str | None = None) -> dict[str, Any]
         return active
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_reserved_tasks() -> dict[str, Any]:
     """Get all reserved tasks (queued but not yet started).
 
@@ -258,7 +258,7 @@ async def backend_reserved_tasks() -> dict[str, Any]:
         return reserved
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_scheduled_tasks() -> dict[str, Any]:
     """Get all scheduled tasks (waiting for ETA/countdown or a recurrence).
 
@@ -280,19 +280,19 @@ async def backend_scheduled_tasks() -> dict[str, Any]:
         return scheduled
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_registered_tasks() -> dict[str, Any]:
     """List task types registered with the backend."""
     raise NotImplementedError("backend 'rq' does not support backend_registered_tasks")
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_list_failed_tasks() -> list[dict[str, Any]]:
     """List tasks that have failed."""
     raise NotImplementedError("backend 'rq' does not support backend_list_failed_tasks")
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_worker_stats(worker_name: str | None = None) -> dict[str, Any]:
     """Get worker statistics and info.
 
@@ -309,7 +309,7 @@ async def backend_worker_stats(worker_name: str | None = None) -> dict[str, Any]
         return stats
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_worker_queues(worker_name: str | None = None) -> dict[str, Any]:
     """List all queues each worker is consuming from."""
     settings = rq_settings()
@@ -325,7 +325,7 @@ async def backend_worker_queues(worker_name: str | None = None) -> dict[str, Any
         return queues_dict
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_delete_schedule(name: str) -> dict[str, Any]:
     """Remove a periodic task from the scheduler."""
     settings = rq_settings()
@@ -337,7 +337,7 @@ async def backend_delete_schedule(name: str) -> dict[str, Any]:
         return {"status": "not_found", "name": name}
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_list_schedules() -> list[dict[str, Any]]:
     """List all schedule entries.
 
@@ -371,7 +371,7 @@ async def backend_list_schedules() -> list[dict[str, Any]]:
         return await asyncio.to_thread(_read)
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_get_schedule(name: str) -> dict[str, Any]:
     """Get schedule details."""
     settings = rq_settings()
@@ -404,7 +404,7 @@ async def backend_get_schedule(name: str) -> dict[str, Any]:
         return await asyncio.to_thread(_read)
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_enable_schedule(name: str) -> dict[str, Any]:
     """Enable a schedule.
 
@@ -416,7 +416,7 @@ async def backend_enable_schedule(name: str) -> dict[str, Any]:
     return await backend_run_schedule_now(name)
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_disable_schedule(name: str) -> dict[str, Any]:
     """Disable a schedule.
 
@@ -427,7 +427,7 @@ async def backend_disable_schedule(name: str) -> dict[str, Any]:
     return await backend_delete_schedule(name)
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_run_schedule_now(name: str) -> dict[str, Any]:
     """Force a schedule to run ASAP.
 
@@ -449,7 +449,7 @@ async def backend_run_schedule_now(name: str) -> dict[str, Any]:
         return await asyncio.to_thread(_run)
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_schedule_exists(name: str) -> bool:
     """Return True if a scheduled job with the given name exists."""
     settings = rq_settings()
@@ -457,7 +457,7 @@ async def backend_schedule_exists(name: str) -> bool:
         return await r.zscore(settings.rq_scheduler_zset, name) is not None
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_update_schedule(
     name: str,
     new_schedule: int | float | str | dict[str, Any] | None = None,
@@ -555,7 +555,7 @@ async def backend_update_schedule(
         return await asyncio.to_thread(_update)
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_export_schedules() -> list[dict[str, Any]]:
     """Export every schedule as a portable record that round-trips through backend_import_schedules.
 
@@ -613,7 +613,7 @@ async def backend_export_schedules() -> list[dict[str, Any]]:
         return records
 
 
-@tai_app.tools.tool
+@tai42_app.tools.tool
 async def backend_import_schedules(schedules: list[dict[str, Any]]) -> dict[str, Any]:
     """Import schedule records produced by backend_export_schedules, upserting by name.
 

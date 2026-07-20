@@ -7,7 +7,7 @@ from typing import Any
 
 from fastmcp import Context
 
-from tai_backend_rq.signatures import add_signature_params, exclude_fastmcp_ctx_from_kwargs
+from tai42_backend_rq.signatures import add_signature_params, exclude_fastmcp_ctx_from_kwargs
 
 
 async def plain(x: int, note: str = "hi") -> str:

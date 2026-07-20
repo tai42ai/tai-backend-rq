@@ -33,7 +33,7 @@ import pytest
 from redis import Redis
 from rq import Queue
 
-from tai_backend_rq.worker import run_rq_worker
+from tai42_backend_rq.worker import run_rq_worker
 
 # The registry a fleet op would mutate in the worker's MAIN process. A work-horse
 # child inherits its value AT FORK, so the value a job observes is the one the

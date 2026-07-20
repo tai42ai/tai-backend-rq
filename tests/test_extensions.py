@@ -9,8 +9,8 @@ import pytest
 from rq.exceptions import NoSuchJobError
 from rq.job import JobStatus
 
-from tai_backend_rq import extensions
-from tai_backend_rq.settings import rq_settings
+from tai42_backend_rq import extensions
+from tai42_backend_rq.settings import rq_settings
 
 from .conftest import make_client_ctx
 

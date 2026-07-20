@@ -30,9 +30,9 @@ from rq import Queue, SimpleWorker, Worker
 from rq.exceptions import StopRequested
 from rq.timeouts import HorseMonitorTimeoutException, TimerDeathPenalty, UnixSignalDeathPenalty
 from rq.worker import WorkerStatus
-from tai_contract.app import tai_app
+from tai42_contract.app import tai42_app
 
-from tai_backend_rq.settings import rq_settings
+from tai42_backend_rq.settings import rq_settings
 
 logger = logging.getLogger(__name__)
 
@@ -181,7 +181,7 @@ class CustomRQWorker(_TaiWorkerMixin, Worker):
             return super().perform_job(job, queue)
         finally:
             try:
-                tai_app.monitoring.active.writer.flush()
+                tai42_app.monitoring.active.writer.flush()
             except Exception:
                 logger.error(
                     "work-horse %s: monitoring flush failed; buffered spans are lost", os.getpid(), exc_info=True
@@ -245,7 +245,7 @@ def _after_fork_in_work_horse() -> None:
     disabled, and this log line records the evict.
     """
     logger.info("work-horse %s: evicting inherited monitoring client (fork safety); it rebuilds lazily", os.getpid())
-    tai_app.monitoring.active.writer.shutdown()
+    tai42_app.monitoring.active.writer.shutdown()
 
 
 _fork_hooks_installed = False
@@ -272,7 +272,7 @@ def prepare_forking_worker() -> None:
         "forking worker: shutting down the monitoring writer before the first fork; "
         "each work-horse rebuilds its own client lazily"
     )
-    tai_app.monitoring.active.writer.shutdown()
+    tai42_app.monitoring.active.writer.shutdown()
     if not _fork_hooks_installed:
         os.register_at_fork(after_in_child=_after_fork_in_work_horse)
         _fork_hooks_installed = True
@@ -366,7 +366,7 @@ async def run_rq_worker(
     # that never completed (e.g. a dead bus subscription) — fail loudly rather than
     # accept work this worker cannot serve.
     try:
-        await asyncio.wait_for(tai_app.lifecycle.wait_until_ready(), timeout=_APP_READY_TIMEOUT_SECONDS)
+        await asyncio.wait_for(tai42_app.lifecycle.wait_until_ready(), timeout=_APP_READY_TIMEOUT_SECONDS)
     except TimeoutError as exc:
         raise RuntimeError(
             f"rq worker: the app did not become ready within {_APP_READY_TIMEOUT_SECONDS}s "

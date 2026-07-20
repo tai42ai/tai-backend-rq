@@ -7,7 +7,7 @@ survives until the key's own expiry (``worker_ttl + 60``, minutes) and
 ``Worker.all()`` keeps returning it. A running worker instead refreshes
 ``last_heartbeat`` on every idle dequeue poll, and every ``job_monitoring_interval``
 while it runs a job — the forking worker from its horse monitor, the non-forking one
-from its heartbeat thread (both in :mod:`tai_backend_rq.worker`). So a heartbeat
+from its heartbeat thread (both in :mod:`tai42_backend_rq.worker`). So a heartbeat
 older than the window below is what proves a registered worker is a registry ghost
 rather than a live process.
 

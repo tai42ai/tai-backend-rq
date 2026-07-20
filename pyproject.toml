@@ -3,7 +3,7 @@ requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tai-backend-rq"
+name = "tai42-backend-rq"
 version = "0.1.0"
 description = "RQ execution backend for the TAI ecosystem — background tool runs and schedules over Redis."
 readme = "README.md"
@@ -24,12 +24,12 @@ classifiers = [
 ]
 dependencies = [
     # The pure interface contract — the Backend ABC, CallbackSchema fields, the
-    # Manifest model, and the tai_app handle the backend registers through.
-    "tai-contract>=0.1,<0.2",
+    # Manifest model, and the tai42_app handle the backend registers through.
+    "tai42-contract>=0.1,<0.2",
     # TaiBaseSettings + settings cache, pooled Redis clients, schedule
     # normalization, and the signature helpers; [jq] compiles the callback
     # condition/expression filters.
-    "tai-kit[jq]>=0.1,<0.2",
+    "tai42-kit[jq]>=0.1,<0.2",
     # The broker stack: RQ workers/queues, the recurring-job scheduler (beat),
     # and the web dashboard.
     "rq~=2.7.0",
@@ -75,10 +75,10 @@ package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["tai_backend_rq*"]
+include = ["tai42_backend_rq*"]
 
 [tool.setuptools.package-data]
-tai_backend_rq = ["py.typed", "tai-plugin.yml"]
+tai42_backend_rq = ["py.typed", "tai-plugin.yml"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -91,7 +91,7 @@ xfail_strict = true
 filterwarnings = ["error"]
 
 [tool.coverage.run]
-source = ["tai_backend_rq"]
+source = ["tai42_backend_rq"]
 
 [tool.coverage.report]
 fail_under = 97
@@ -99,6 +99,13 @@ fail_under = 97
 [tool.uv]
 cache-keys = [{ file = "pyproject.toml" }]
 
+
+# The version floors in [project] are the compatibility contract; these path
+# sources resolve the sibling checkouts while the packages are unpublished.
+# They are not part of wheel metadata.
+[tool.uv.sources]
+tai42-contract = { path = "../tai-contract", editable = true }
+tai42-kit = { path = "../tai-kit", editable = true }
 [tool.ruff]
 src = ["src"]
 target-version = "py313"
@@ -108,7 +115,7 @@ line-length = 120
 select = ["E", "W", "F", "I", "UP", "B", "C4", "SIM", "PIE", "PT", "RUF", "TID"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
-"tai_skeleton".msg = "An execution backend sits below the skeleton: it never imports tai-skeleton."
+"tai42_skeleton".msg = "An execution backend sits below the skeleton: it never imports tai42-skeleton."
 
 [tool.pyright]
 include = ["src", "tests"]

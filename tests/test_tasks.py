@@ -8,9 +8,9 @@ from typing import Any
 import pytest
 from rq.exceptions import NoSuchJobError
 
-from tai_backend_rq import tasks
-from tai_backend_rq.callback import CallbackSchema
-from tai_backend_rq.settings import rq_settings
+from tai42_backend_rq import tasks
+from tai42_backend_rq.callback import CallbackSchema
+from tai42_backend_rq.settings import rq_settings
 
 from .conftest import make_client_ctx
 

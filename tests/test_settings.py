@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tai_backend_rq.settings import RqSettings, rq_settings
+from tai42_backend_rq.settings import RqSettings, rq_settings
 
 
 def test_env_prefix_is_rq():

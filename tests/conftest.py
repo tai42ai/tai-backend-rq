@@ -1,7 +1,7 @@
 """Bind a recording stub app before the backend package is imported.
 
-``tai_backend_rq`` registers its backend class, tools, and extensions on the
-global ``tai_app`` handle at import time. Binding a stub here — at collection
+``tai42_backend_rq`` registers its backend class, tools, and extensions on the
+global ``tai42_app`` handle at import time. Binding a stub here — at collection
 time, before any test module imports the package — captures those import-time
 registrations so tests can assert on them, without standing up a real runtime.
 
@@ -19,11 +19,11 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 import pytest
-from tai_contract.app import tai_app
+from tai42_contract.app import tai42_app
 
 
 class RecordingTools:
-    """Records ``@tai_app.tools.tool`` registrations and ``run_tool`` calls."""
+    """Records ``@tai42_app.tools.tool`` registrations and ``run_tool`` calls."""
 
     def __init__(self) -> None:
         self.registered: list[str] = []
@@ -50,7 +50,7 @@ class RecordingTools:
 
 
 class RecordingExtensions:
-    """Records ``@tai_app.extensions.extension`` registrations."""
+    """Records ``@tai42_app.extensions.extension`` registrations."""
 
     def __init__(self) -> None:
         self.registered: list[tuple[str | None, Any]] = []
@@ -64,7 +64,7 @@ class RecordingExtensions:
 
 
 class RecordingBackends:
-    """Records ``@tai_app.backends.register_backend`` registrations."""
+    """Records ``@tai42_app.backends.register_backend`` registrations."""
 
     def __init__(self) -> None:
         self.registered: list[type] = []
@@ -139,7 +139,7 @@ class StubApp:
 
 
 stub_app = StubApp()
-tai_app.bind(stub_app)
+tai42_app.bind(stub_app)
 
 
 @pytest.fixture(autouse=True)
@@ -160,7 +160,7 @@ def _reset_process_state(monkeypatch: pytest.MonkeyPatch) -> None:
     prior test set cannot leak into the next. Set through ``monkeypatch``, which
     restores it when the test ends.
     """
-    from tai_backend_rq.settings import rq_settings
+    from tai42_backend_rq.settings import rq_settings
 
     monkeypatch.delenv(rq_settings().manifest_key, raising=False)
 

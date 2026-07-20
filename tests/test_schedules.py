@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from tai_backend_rq.schedules import ScheduleRecord, apply_normalized_schedule, crontab_string, interval_seconds
+from tai42_backend_rq.schedules import ScheduleRecord, apply_normalized_schedule, crontab_string, interval_seconds
 
 
 def test_schedule_record_accepts_canonical_interval():

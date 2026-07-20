@@ -14,8 +14,8 @@ import pytest
 from rq.exceptions import NoSuchJobError
 from rq.job import JobStatus
 
-from tai_backend_rq import tools
-from tai_backend_rq.settings import rq_settings
+from tai42_backend_rq import tools
+from tai42_backend_rq.settings import rq_settings
 
 from .conftest import FakeAsyncRedis, make_client_ctx
 

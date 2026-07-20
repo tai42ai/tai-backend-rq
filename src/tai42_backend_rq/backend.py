@@ -1,9 +1,9 @@
 """The :class:`RqBackend` — the strategy object that launches the RQ worker
 runtime (worker/beat/dashboard) and executes the work its workers pull.
 
-Registered on import via ``@tai_app.backends.register_backend`` (the decorator
+Registered on import via ``@tai42_app.backends.register_backend`` (the decorator
 instantiates the class once per process lifetime). ``launch`` is the sole
-:class:`~tai_contract.backend.Backend` method: fleet propagation of config
+:class:`~tai42_contract.backend.Backend` method: fleet propagation of config
 changes is the app's own worker bus, internal to the app, and a backend-runtime
 process receives fleet ops through the app's bus subscription exactly like a
 serving HTTP worker.
@@ -14,11 +14,11 @@ from __future__ import annotations
 import sys
 from collections.abc import Sequence
 
-from tai_contract.app import tai_app
-from tai_contract.backend import Backend
+from tai42_contract.app import tai42_app
+from tai42_contract.backend import Backend
 
 
-@tai_app.backends.register_backend
+@tai42_app.backends.register_backend
 class RqBackend(Backend):
     """RQ execution backend: ``launch`` runs worker/beat/dashboard and executes
     enqueued work."""
@@ -29,7 +29,7 @@ class RqBackend(Backend):
         subcmd, *rest = args
 
         if subcmd == "worker":
-            from tai_backend_rq.worker import main, run_rq_worker
+            from tai42_backend_rq.worker import main, run_rq_worker
 
             ctx = main.make_context("rq-worker", list(rest))
             await run_rq_worker(**ctx.params)
