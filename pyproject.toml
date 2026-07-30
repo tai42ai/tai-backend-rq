@@ -25,7 +25,7 @@ classifiers = [
 dependencies = [
     # The pure interface contract — the Backend ABC, CallbackSchema fields, the
     # Manifest model, and the tai42_app handle the backend registers through.
-    "tai42-contract>=0.2,<0.3",
+    "tai42-contract>=0.3,<0.4",
     # TaiBaseSettings + settings cache, pooled Redis clients, schedule
     # normalization, and the signature helpers; [jq] compiles the callback
     # condition/expression filters.
