@@ -24,17 +24,21 @@ class RecordingTools:
 
     def __init__(self) -> None:
         self.registered: list[str] = []
+        self.tags: dict[str, set[str]] = {}
         self.run_calls: list[tuple[str, dict[str, Any]]] = []
         self.run_result: Any = None
         self.run_error: Exception | None = None
 
     def tool(self, *args: Any, **kwargs: Any) -> Any:
+        tags = kwargs.get("tags", set())
         if len(args) == 1 and callable(args[0]) and not kwargs:
             self.registered.append(args[0].__name__)
+            self.tags[args[0].__name__] = tags
             return args[0]
 
         def decorator(func: Any) -> Any:
             self.registered.append(func.__name__)
+            self.tags[func.__name__] = tags
             return func
 
         return decorator

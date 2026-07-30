@@ -54,6 +54,11 @@ def test_canonical_tool_is_registered(name, app):
     assert name in app.tools.registered
 
 
+@pytest.mark.parametrize("name", TASK_WORKER_TOOLS + SCHEDULE_TOOLS)
+def test_canonical_tool_is_tagged_backend(name, app):
+    assert app.tools.tags[name] == {"backend"}
+
+
 @pytest.mark.parametrize("name", NOT_IMPLEMENTED_TOOLS)
 async def test_unsupported_tool_raises_not_implemented(name):
     stub = getattr(tools_module, name)
