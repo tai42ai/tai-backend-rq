@@ -5,7 +5,11 @@
   "packages": {
     ".": {
       "skip-changelog": true,
-      "package-name": "tai42-backend-rq"
+      "package-name": "tai42-backend-rq",
+      "extra-files": [
+        "tai-plugin.yml",
+        "src/tai42_backend_rq/tai-plugin.yml"
+      ]
     }
   }
 }
